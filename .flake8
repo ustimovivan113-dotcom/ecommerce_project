@@ -1,0 +1,10 @@
+[flake8]
+max-line-length = 88
+# Игнорировать конфликт с Black (пробелы перед двоеточиями)
+extend-ignore = E203
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    htmlcov,
+    .idea
