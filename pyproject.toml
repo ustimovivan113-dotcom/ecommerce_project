@@ -37,3 +37,8 @@ addopts = "-v --strict-markers"
 [tool.coverage.run]
 source = ["src"]
 omit = ["src/main.py"]
+
+[dependency-groups]
+dev = [
+    "pre-commit (>=4.3.0,<5.0.0)"
+]
