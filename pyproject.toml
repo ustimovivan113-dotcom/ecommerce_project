@@ -28,6 +28,14 @@ profile = "black"
 
 [tool.flake8]
 max-line-length = 88
+extend-ignore = ["E203"]
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    "htmlcov",
+    ".idea"
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
