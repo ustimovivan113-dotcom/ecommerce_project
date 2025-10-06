@@ -6,28 +6,16 @@ class Product:
     ) -> None:
         self.name = name
         self.description = description
-        self.__price = price  # Приватный
+        self.price = price
         self.quantity = quantity
 
-    @property
-    def price(self) -> float:
-        """Геттер для цены."""
-        return self.__price
+    def __str__(self) -> str:
+        """Строковое представление продукта: 'Название продукта, X руб. Остаток:
+        X шт.'"""
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
-    @price.setter
-    def price(self, new_price: float) -> None:
-        """Сеттер для цены с проверкой."""
-        if new_price > 0:
-            self.__price = new_price
-        else:
-            print("Цена не должна быть нулевая или отрицательная")
-
-    @classmethod
-    def new_product(cls, product_data: dict) -> "Product":
-        """Создаёт новый продукт из словаря."""
-        return cls(
-            name=product_data["name"],
-            description=product_data["description"],
-            price=product_data["price"],  # Использует setter косвенно через init
-            quantity=product_data["quantity"],
-        )
+    def __add__(self, other: 'Product') -> float:
+        """Сложение двух продуктов: сумма (цена * количество) для обоих."""
+        if isinstance(other, Product):
+            return (self.price * self.quantity) + (other.price * other.quantity)
+        return NotImplemented
