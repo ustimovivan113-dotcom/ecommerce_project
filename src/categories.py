@@ -13,7 +13,7 @@ class Category:
     def __init__(self, name: str, description: str, products: List[Product]) -> None:
         self.name = name
         self.description = description
-        self.__products = products  # Сделаем приватным для контроля доступа
+        self.__products = products
 
         # Авто-инкремент атрибутов класса
         Category.category_count += 1
