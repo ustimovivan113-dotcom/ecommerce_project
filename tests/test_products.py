@@ -1,11 +1,21 @@
 import pytest
 
-from src.products import Product
+from src.products import LawnGrass, Product, Smartphone
 
 
 @pytest.fixture
 def sample_product():
     return Product("Test Phone", "Test Desc", 100.0, 10)
+
+
+@pytest.fixture
+def sample_smartphone():
+    return Smartphone("Samsung S23", "Ultra", 180000.0, 5, 95.5, "S23", 256, "Gray")
+
+
+@pytest.fixture
+def sample_lawngrass():
+    return LawnGrass("Grass1", "Green", 500.0, 20, "Russia", "7 days", "Green")
 
 
 def test_product_init(sample_product):
@@ -23,21 +33,33 @@ def test_product_zero_quantity():
     assert product.name == "Test Zero"
 
 
-def test_product_str():
-    """Проверяет __str__ для Product."""
-    product = Product("Test Product", "Test Desc", 150.5, 3)
-    assert str(product) == "Test Product, 150.5 руб. Остаток: 3 шт."
+def test_smartphone_init(sample_smartphone):
+    """Проверяет инициализацию Smartphone."""
+    assert sample_smartphone.name == "Samsung S23"
+    assert sample_smartphone.efficiency == 95.5
+    assert sample_smartphone.model == "S23"
+    assert sample_smartphone.memory == 256
+    assert sample_smartphone.color == "Gray"
 
 
-def test_product_add():
-    """Проверяет __add__ для двух продуктов."""
-    product1 = Product("Prod1", "Desc1", 100.0, 2)  # 200
-    product2 = Product("Prod2", "Desc2", 200.0, 3)  # 600
-    assert product1 + product2 == 800.0
+def test_lawngrass_init(sample_lawngrass):
+    """Проверяет инициализацию LawnGrass."""
+    assert sample_lawngrass.name == "Grass1"
+    assert sample_lawngrass.country == "Russia"
+    assert sample_lawngrass.germination_period == "7 days"
+    assert sample_lawngrass.color == "Green"
 
 
-def test_product_add_not_product():
-    """Проверяет __add__ с не-Product (должен вызывать TypeError)."""
-    product = Product("Prod", "Desc", 100.0, 1)
+def test_add_same_type(sample_smartphone):
+    """Проверяет сложение продуктов одного типа."""
+    smartphone2 = Smartphone(
+        "Iphone 15", "Pro", 210000.0, 8, 98.2, "15", 512, "Space Gray"
+    )
+    total = sample_smartphone + smartphone2
+    assert total == (180000.0 * 5 + 210000.0 * 8)
+
+
+def test_add_different_type(sample_smartphone, sample_lawngrass):
+    """Проверяет ошибку при сложении разных типов."""
     with pytest.raises(TypeError):
-        product + "not a product"
+        sample_smartphone + sample_lawngrass

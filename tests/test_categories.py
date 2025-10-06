@@ -1,7 +1,7 @@
 import pytest
 
 from src.categories import Category
-from src.products import Product
+from src.products import Product, Smartphone
 
 
 @pytest.fixture(autouse=True)
@@ -28,8 +28,7 @@ def test_category_init(sample_category):
     """Проверяет инициализацию Category."""
     assert sample_category.name == "Test Cat"
     assert sample_category.description == "Test Cat Desc"
-    assert len(sample_category.products) == 2
-    assert sample_category.products[0].name == "Prod1"  # Доп. покрытие
+    assert "Prod1, 100.0 руб. Остаток: 1 шт." in sample_category.products
 
 
 def test_category_counts():
@@ -64,14 +63,17 @@ def test_category_no_products():
     assert Category.product_count == 0
 
 
-def test_category_str(sample_category):
-    """Проверяет __str__ для Category (сумма quantity)."""
-    assert str(sample_category) == "Test Cat, количество продуктов: 3 шт."  # 1 + 2 = 3
+def test_add_product(sample_category):
+    """Проверяет добавление продукта."""
+    new_product = Smartphone(
+        "New Phone", "New Desc", 150.0, 3, 90.0, "ModelX", 128, "Black"
+    )
+    sample_category.add_product(new_product)
+    assert "New Phone, 150.0 руб. Остаток: 3 шт." in sample_category.products
+    assert Category.product_count == 3  # Было 2, +1
 
 
-def test_category_iterator(sample_category):
-    """Проверяет итерацию по продуктам категории."""
-    products = list(sample_category)  # Преобразуем итератор в список
-    assert len(products) == 2
-    assert products[0].name == "Prod1"
-    assert products[1].name == "Prod2"
+def test_add_invalid_product(sample_category):
+    """Проверяет ошибку при добавлении не-продукта."""
+    with pytest.raises(TypeError):
+        sample_category.add_product("Not a product")
