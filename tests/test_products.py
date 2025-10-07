@@ -1,21 +1,11 @@
 import pytest
 
-from src.products import LawnGrass, Product, Smartphone
+from src.products import BaseProduct, LawnGrass, Product, Smartphone
 
 
 @pytest.fixture
 def sample_product():
     return Product("Test Phone", "Test Desc", 100.0, 10)
-
-
-@pytest.fixture
-def sample_smartphone():
-    return Smartphone("Samsung S23", "Ultra", 180000.0, 5, 95.5, "S23", 256, "Gray")
-
-
-@pytest.fixture
-def sample_lawngrass():
-    return LawnGrass("Grass1", "Green", 500.0, 20, "Russia", "7 days", "Green")
 
 
 def test_product_init(sample_product):
@@ -33,33 +23,58 @@ def test_product_zero_quantity():
     assert product.name == "Test Zero"
 
 
-def test_smartphone_init(sample_smartphone):
+def test_print_mixin(capsys):
+    """Проверяет печать от PrintMixin."""
+    Product("Mixin Test", "Desc", 10.0, 1)
+    captured = capsys.readouterr()
+    assert "Product('Mixin Test', 'Desc', 10.0, 1)" in captured.out
+
+
+def test_smartphone_init():
     """Проверяет инициализацию Smartphone."""
-    assert sample_smartphone.name == "Samsung S23"
-    assert sample_smartphone.efficiency == 95.5
-    assert sample_smartphone.model == "S23"
-    assert sample_smartphone.memory == 256
-    assert sample_smartphone.color == "Gray"
-
-
-def test_lawngrass_init(sample_lawngrass):
-    """Проверяет инициализацию LawnGrass."""
-    assert sample_lawngrass.name == "Grass1"
-    assert sample_lawngrass.country == "Russia"
-    assert sample_lawngrass.germination_period == "7 days"
-    assert sample_lawngrass.color == "Green"
-
-
-def test_add_same_type(sample_smartphone):
-    """Проверяет сложение продуктов одного типа."""
-    smartphone2 = Smartphone(
-        "Iphone 15", "Pro", 210000.0, 8, 98.2, "15", 512, "Space Gray"
+    smartphone = Smartphone(
+        "Samsung S23",
+        "High end",
+        1500.0,
+        5,
+        "Exynos",
+        "S23",
+        256,
+        "Black",
     )
-    total = sample_smartphone + smartphone2
-    assert total == (180000.0 * 5 + 210000.0 * 8)
+    assert smartphone.name == "Samsung S23"
+    assert smartphone.description == "High end"
+    assert smartphone.price == 1500.0
+    assert smartphone.quantity == 5
+    assert smartphone.performance == "Exynos"
+    assert smartphone.model == "S23"
+    assert smartphone.memory == 256
+    assert smartphone.color == "Black"
+    assert isinstance(smartphone, Product)  # Проверка наследования
 
 
-def test_add_different_type(sample_smartphone, sample_lawngrass):
-    """Проверяет ошибку при сложении разных типов."""
-    with pytest.raises(TypeError):
-        sample_smartphone + sample_lawngrass
+def test_lawn_grass_init():
+    """Проверяет инициализацию LawnGrass."""
+    grass = LawnGrass(
+        "Green Grass",
+        "Fast grow",
+        20.0,
+        50,
+        "Russia",
+        5,
+        "Green",
+    )
+    assert grass.name == "Green Grass"
+    assert grass.description == "Fast grow"
+    assert grass.price == 20.0
+    assert grass.quantity == 50
+    assert grass.country == "Russia"
+    assert grass.germination_period == 5
+    assert grass.color == "Green"
+    assert isinstance(grass, Product)  # Проверка наследования
+
+
+def test_base_product_cannot_instantiate():
+    """Проверяет, что BaseProduct нельзя инстанцировать."""
+    with pytest.raises(TypeError, match="Can't instantiate abstract class"):
+        BaseProduct()

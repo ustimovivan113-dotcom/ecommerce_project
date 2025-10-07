@@ -1,23 +1,75 @@
-class Product:
+from abc import ABC, abstractmethod
+
+
+class PrintMixin:
+    """Миксин для печати информации при создании объекта."""
+
+    def __init__(self, *args, **kwargs) -> None:
+        class_name = self.__class__.__name__
+        params = ", ".join(
+            [repr(arg) for arg in args] + [f"{k}={repr(v)}" for k, v in kwargs.items()]
+        )
+        print(f"{class_name}({params})")
+        super().__init__()  # Вызываем без аргументов, так как BaseProduct абстрактный
+
+
+class BaseProduct(ABC):
+    """Абстрактный базовый класс для продуктов."""
+
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        pass
+
+    @property
+    @abstractmethod
+    def description(self) -> str:
+        pass
+
+    @property
+    @abstractmethod
+    def price(self) -> float:
+        pass
+
+    @property
+    @abstractmethod
+    def quantity(self) -> int:
+        pass
+
+
+class Product(PrintMixin, BaseProduct):
     """Класс для представления продукта в магазине."""
 
     def __init__(
         self, name: str, description: str, price: float, quantity: int
     ) -> None:
-        self.name = name
-        self.description = description
-        self.price = price
-        self.quantity = quantity
+        super().__init__(
+            name, description, price, quantity
+        )  # Передаем аргументы в PrintMixin
+        self._name = name
+        self._description = description
+        self._price = price
+        self._quantity = quantity
 
-    def __add__(self, other):
-        """Переопределяем сложение для продуктов одинакового типа."""
-        if type(self) != type(other):  # noqa: E721
-            raise TypeError("Нельзя складывать продукты разных классов")
-        return self.price * self.quantity + other.price * other.quantity
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def description(self) -> str:
+        return self._description
+
+    @property
+    def price(self) -> float:
+        return self._price
+
+    @property
+    def quantity(self) -> int:
+        return self._quantity
 
 
 class Smartphone(Product):
-    """Класс для смартфонов, наследник Product."""
+    """Класс для смартфонов, наследует от Product."""
 
     def __init__(
         self,
@@ -25,20 +77,20 @@ class Smartphone(Product):
         description: str,
         price: float,
         quantity: int,
-        efficiency: float,
+        performance: str,
         model: str,
         memory: int,
         color: str,
     ) -> None:
         super().__init__(name, description, price, quantity)
-        self.efficiency = efficiency
+        self.performance = performance
         self.model = model
         self.memory = memory
         self.color = color
 
 
 class LawnGrass(Product):
-    """Класс для газонной травы, наследник Product."""
+    """Класс для газонной травы, наследует от Product."""
 
     def __init__(
         self,
@@ -47,7 +99,7 @@ class LawnGrass(Product):
         price: float,
         quantity: int,
         country: str,
-        germination_period: str,
+        germination_period: int,
         color: str,
     ) -> None:
         super().__init__(name, description, price, quantity)
