@@ -39,7 +39,7 @@ def test_category_counts():
         description="Desc1",
         products=[Product(name="P1", description="D1", price=1.0, quantity=1)],
     )
-    assert cat1.name == "Cat1"
+    assert cat1.name == "Cat1"  # Используем cat1
     assert Category.category_count == 1
     assert Category.product_count == 1
 
@@ -51,7 +51,7 @@ def test_category_counts():
             Product(name="P3", description="D3", price=3.0, quantity=1),
         ],
     )
-    assert cat2.name == "Cat2"
+    assert cat2.name == "Cat2"  # Используем cat2
     assert Category.category_count == 2
     assert Category.product_count == 3  # 1 + 2
 
@@ -59,23 +59,17 @@ def test_category_counts():
 def test_category_no_products():
     """Проверяет категорию без продуктов."""
     cat = Category(name="Empty Cat", description="Empty Desc", products=[])
-    assert cat.name == "Empty Cat"
+    assert cat.name == "Empty Cat"  # Используем cat
     assert Category.category_count == 1
     assert Category.product_count == 0
 
 
-def test_add_product(sample_category):
-    """Проверяет добавление продукта в категорию."""
-    new_product = Product("New Prod", "New Desc", 50.0, 3)
-    sample_category.add_product(new_product)
-    assert len(sample_category.products) == 3
-    assert sample_category.products[-1].name == "New Prod"
-    assert Category.product_count == 3
+def test_category_middle_price(sample_category):
+    """Проверяет метод middle_price."""
+    assert sample_category.middle_price() == 150.0  # (100 + 200) / 2
 
 
-def test_add_invalid_product(sample_category):
-    """Проверяет добавление некорректного продукта."""
-    with pytest.raises(
-        ValueError, match="Можно добавлять только объекты класса Product"
-    ):
-        sample_category.add_product("Not a product")
+def test_category_middle_price_empty():
+    """Проверяет middle_price для пустой категории."""
+    empty_cat = Category("Empty", "Desc", [])
+    assert empty_cat.middle_price() == 0

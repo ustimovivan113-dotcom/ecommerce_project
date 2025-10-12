@@ -12,18 +12,16 @@ class Category:
 
     def __init__(self, name: str, description: str, products: List[Product]) -> None:
         self.name = name
-        self.description = description
+        self.description = description  # Для PEP8, даже если строка короткая
         self.products = products
 
         # Авто-инкремент атрибутов класса
         Category.category_count += 1
         Category.product_count += len(products)
 
-    def add_product(self, product: Product) -> None:
-        """Добавляет продукт в категорию."""
-        if not isinstance(product, Product):
-            raise ValueError(
-                "Можно добавлять только объекты класса Product или его наследников"
-            )
-        self.products.append(product)
-        Category.product_count += 1
+    def middle_price(self) -> float:
+        """Подсчитывает средний ценник всех товаров в категории."""
+        if not self.products:
+            return 0
+        total_price = sum(product.price for product in self.products)
+        return total_price / len(self.products)
